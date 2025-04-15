@@ -1,6 +1,6 @@
 # Exercise Guide
 
-A real-time exercise guide application that uses computer vision to track poses and provide feedback. The application allows you to record exercise templates and compare your current pose with the recorded template.
+A real-time exercise guide application that uses computer vision to track poses and provide feedback.
 
 ## Features
 
@@ -20,7 +20,7 @@ A real-time exercise guide application that uses computer vision to track poses 
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/nuclearshadow/exercise-guide
 cd exercise-guide
 ```
 
