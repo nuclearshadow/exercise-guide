@@ -36,6 +36,9 @@ function processFrame() {
 
 // Draw landmarks
 socket.on('landmarks', (landmarks) => {
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     landmarks.forEach(lm => {
@@ -44,4 +47,5 @@ socket.on('landmarks', (landmarks) => {
         ctx.fillStyle = 'red';
         ctx.fill();
     });
+    ctx.restore();
 });
