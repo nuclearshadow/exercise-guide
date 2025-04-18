@@ -3,11 +3,23 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const socket = io();
 
+let webcamStream = null;
 // Get webcam
 navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+    webcamStream = stream;
     video.srcObject = stream;
     video.play();
     processFrame();
+});
+
+const disconnectBtn = document.getElementById('disconnect-btn');
+disconnectBtn.addEventListener('click', () => {
+    console.log('Disconnect click')
+    socket.disconnect();
+    if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+    }
+    window.location.replace('/');
 });
 
 // Send frames at ~15 FPS
