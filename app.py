@@ -88,6 +88,8 @@ def handle_frame(data):
                 'visibility': lm.visibility
             })
     
+    user_in_frame = is_user_in_frame(live_pose)
+    
     similarity = 0.0
     if len(result.pose_world_landmarks) > 0:
         user_world = result.pose_world_landmarks[0]
@@ -111,7 +113,17 @@ def handle_frame(data):
         'similarity': similarity,
         'step': current_index,
         'reps': reps,
+        'user_in_frame': user_in_frame,
     })
+
+
+
+def is_user_in_frame(landmarks, visibility_threshold=0.5):
+    if len(landmarks) == 0: return False
+    def get_visibility(lm):
+        return lm.visibility if hasattr(lm, 'visibility') else lm['visibility']
+
+    return all(get_visibility(lm) > visibility_threshold for lm in landmarks)
 
 
 def compare_poses(live, target):

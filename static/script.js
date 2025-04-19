@@ -53,6 +53,7 @@ const similarityBar = document.getElementById("similarity-bar");
 const similarityRating = document.getElementById("similarity-rating");
 const repsElement = document.getElementById("reps");
 const refImage = document.getElementById("ref-image");
+const userInFrameOverlay = document.getElementById("user-in-frame-overlay");
 // Draw landmarks
 socket.on('landmarks', (landmarks) => {
     ctx.save();
@@ -60,8 +61,10 @@ socket.on('landmarks', (landmarks) => {
     ctx.scale(-1, 1);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    drawPose(landmarks.live, 'red');
-    drawPose(landmarks.target, 'blue');
+    if (landmarks.user_in_frame) {
+        drawPose(landmarks.live, 'red');
+        drawPose(landmarks.target, 'blue');
+    }
     ctx.restore();
     const similarityPercent = Math.floor(landmarks.similarity*100);
     similarityElement.textContent = similarityPercent;
@@ -81,6 +84,7 @@ socket.on('landmarks', (landmarks) => {
     repsElement.textContent = landmarks.reps;
     const imageFilename = `${String(landmarks.step+1).padStart(3, '0')}.jpg`;
     refImage.src = `/static/images/poses/${exerciseName}/${imageFilename}`;
+    userInFrameOverlay.style.display = landmarks.user_in_frame ? 'none' : 'flex';
 });
 
 function drawPose(landmarks, color) {
