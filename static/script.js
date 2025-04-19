@@ -48,7 +48,11 @@ function processFrame() {
     setTimeout(processFrame, 66); // ~15 fps
 }
 
-const similarityElem = document.getElementById("similarity");
+const similarityElement = document.getElementById("similarity");
+const similarityBar = document.getElementById("similarity-bar");
+const similarityRating = document.getElementById("similarity-rating");
+const repsElement = document.getElementById("reps");
+const refImage = document.getElementById("ref-image");
 // Draw landmarks
 socket.on('landmarks', (landmarks) => {
     ctx.save();
@@ -59,7 +63,24 @@ socket.on('landmarks', (landmarks) => {
     drawPose(landmarks.live, 'red');
     drawPose(landmarks.target, 'blue');
     ctx.restore();
-    similarityElem.innerText = `Similarity: ${landmarks.similarity}`;
+    const similarityPercent = Math.floor(landmarks.similarity*100);
+    similarityElement.textContent = similarityPercent;
+    similarityBar.style.width = `${similarityPercent}%`;
+    
+    if (similarityPercent < 40) {
+        similarityRating.textContent = "Needs Improvement";
+        similarityRating.className = "similarity-rating similarity-low";
+    } else if (similarityPercent < 70) {
+        similarityRating.textContent = "Getting Better";
+        similarityRating.className = "similarity-rating similarity-medium";
+    } else {
+        similarityRating.textContent = "Excellent Form";
+        similarityRating.className = "similarity-rating similarity-high";
+    }
+
+    repsElement.textContent = landmarks.reps;
+    const imageFilename = `${String(landmarks.step+1).padStart(3, '0')}.jpg`;
+    refImage.src = `/static/images/poses/${exerciseName}/${imageFilename}`;
 });
 
 function drawPose(landmarks, color) {

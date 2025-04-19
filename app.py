@@ -31,7 +31,14 @@ landmarker = PoseLandmarker.create_from_options(options)
 EXERCISES_PATH = 'exercises'
 active_exercise = None
 current_index = 0
+reps = 0
 SIMILARITY_THRESHOLD = 0.85
+
+def reset_global_state():
+    global active_exercise, current_index, reps
+    active_exercise = None
+    current_index = 0
+    reps = 0
 
 @app.route('/')
 def index():
@@ -46,17 +53,17 @@ def index():
 @app.route('/session/<exercise_name>')
 def session(exercise_name):
     global active_exercise, current_index
+    reset_global_state()
     path = os.path.join(EXERCISES_PATH, f'{exercise_name}.json')
     if not os.path.exists(path):
         return "Exercise not found", 404
     with open(path) as f:
         active_exercise = json.load(f)
-        current_index = 0
-    return render_template('session.html')
+    return render_template('session.html', exercise_name=exercise_name)
 
 @socketio.on('frame')
 def handle_frame(data):
-    global current_index
+    global current_index, reps
     if not active_exercise:
         return
     
@@ -82,7 +89,6 @@ def handle_frame(data):
             })
     
     similarity = 0.0
-    next_pose = False
     if len(result.pose_world_landmarks) > 0:
         user_world = result.pose_world_landmarks[0]
         target_world = active_exercise['key_poses'][current_index]['pose_world_landmarks']
@@ -92,8 +98,8 @@ def handle_frame(data):
             current_index += 1
             if current_index >= len(active_exercise['key_poses']):
                 current_index = 0
-            next_pose = True
-
+                reps += 1
+    
     # === Transform target pose landmarks to match user live pose ===
     transformed_target = transform_pose_to_match_user(
         active_exercise['key_poses'][current_index]['pose_landmarks'], live_pose
@@ -103,7 +109,8 @@ def handle_frame(data):
         'live': live_pose,
         'target': transformed_target,
         'similarity': similarity,
-        'next_pose_triggered': next_pose
+        'step': current_index,
+        'reps': reps,
     })
 
 
@@ -115,27 +122,36 @@ def compare_poses(live, target):
         return getattr(lm, key) if hasattr(lm, key) else lm[key]
 
     total_distance = 0.0
-    valid_points = 0
+    count = 0
 
     for lm1, lm2 in zip(live, target):
         v1 = get_attr(lm1, 'visibility')
         v2 = get_attr(lm2, 'visibility')
 
-        if v1 > 0.5 and v2 > 0.5:
-            x1, y1 = get_attr(lm1, 'x'), get_attr(lm1, 'y')
-            x2, y2 = get_attr(lm2, 'x'), get_attr(lm2, 'y')
+        # Skip if target doesn't care about this landmark
+        if v2 <= 0.5:
+            continue
 
-            dx = x1 - x2
-            dy = y1 - y2
-            dist = (dx**2 + dy**2) ** 0.5
-            total_distance += dist
-            valid_points += 1
+        # If user landmark not visible, penalize with max distance
+        if v1 <= 0.5:
+            total_distance += 1.0  # max normalized distance
+            count += 1
+            continue
 
-    if valid_points == 0:
+        x1, y1 = get_attr(lm1, 'x'), get_attr(lm1, 'y')
+        x2, y2 = get_attr(lm2, 'x'), get_attr(lm2, 'y')
+
+        dx = x1 - x2
+        dy = y1 - y2
+        dist = (dx**2 + dy**2) ** 0.5
+
+        total_distance += dist
+        count += 1
+
+    if count == 0:
         return 0.0
 
-    avg_dist = total_distance / valid_points
-
+    avg_dist = total_distance / count
     similarity = max(0.0, 1.0 - avg_dist * 2.0)
 
     return round(similarity, 3)

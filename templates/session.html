@@ -48,7 +48,7 @@
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
     
-    body {
+    /* body {
       background-color: #F1F5F9;
       color: var(--dark);
       min-height: 100vh;
@@ -56,13 +56,13 @@
       flex-direction: column;
       align-items: center;
       padding: 2rem 1rem;
-    }
+    } */
     
     .container {
       width: 100%;
-      max-width: 1000px;
+      /* max-width: 1000px; */
       background-color: white;
-      border-radius: 12px;
+      /* border-radius: 12px; */
       box-shadow: 0 10px 25px var(--shadow);
       overflow: hidden;
       display: flex;
@@ -332,7 +332,7 @@
             <i class="fas fa-medal"></i>
           </div>
           <div class="video-body" id="reference-video">
-            <img src="/api/placeholder/400/320" alt="Reference exercise" style="max-width: 100%; border-radius: 8px;">
+            <img id="ref-image" src="/static/images/poses/{{ exercise_name }}/001.jpg" height="480" alt="Reference exercise" style="max-width: 100%; border-radius: 8px; transform: scaleX(-1);">
           </div>
         </div>
       </div>
@@ -344,12 +344,12 @@
           <div class="progress-container">
             <div class="progress-bar" id="similarity-bar" style="width: 0%"></div>
           </div>
-          <div class="similarity-rating similarity-low">Needs Improvement</div>
+          <div id="similarity-rating" class="similarity-rating similarity-low">Needs Improvement</div>
         </div>
         
         <div class="stat-box">
           <div class="stat-title">REPS COMPLETED</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="reps">0</div>
           <div class="progress-container">
             <div class="progress-bar" style="width: 0%"></div>
           </div>
@@ -393,14 +393,13 @@
     </div>
   </div>
 
+  <script>
+    const exerciseName = "{{ exercise_name }}";
+  </script>
   <script src="/static/script.js"></script>
   <script>
     // Basic functionality to demonstrate UI interactions
     document.addEventListener('DOMContentLoaded', function() {
-      const similarityElement = document.getElementById('similarity');
-      const similarityBar = document.getElementById('similarity-bar');
-      const similarityRating = document.querySelector('.similarity-rating');
-      const disconnectBtn = document.getElementById('disconnect-btn');
       const sessionTimeElement = document.getElementById('session-time');
       
       // Fake timer for demonstration
@@ -414,29 +413,6 @@
         }
         sessionTimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }, 1000);
-      
-      // Simulate random similarity score changes
-      setInterval(() => {
-        const randomValue = Math.floor(Math.random() * 100);
-        similarityElement.textContent = randomValue;
-        similarityBar.style.width = `${randomValue}%`;
-        
-        if (randomValue < 40) {
-          similarityRating.textContent = "Needs Improvement";
-          similarityRating.className = "similarity-rating similarity-low";
-        } else if (randomValue < 70) {
-          similarityRating.textContent = "Getting Better";
-          similarityRating.className = "similarity-rating similarity-medium";
-        } else {
-          similarityRating.textContent = "Excellent Form";
-          similarityRating.className = "similarity-rating similarity-high";
-        }
-      }, 2000);
-      
-      // Disconnect button functionality
-      disconnectBtn.addEventListener('click', function() {
-        document.getElementById('feedback-status').innerHTML = '<i class="fas fa-circle" style="color: #EF4444;"></i> Disconnected';
-      });
     });
   </script>
 </body>
