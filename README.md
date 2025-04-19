@@ -50,3 +50,8 @@ http://localhost:5001
 ## Using the Application
 
 TBD
+
+## Acknowledgements
+
+- Using google's Mediapipe for pose detection
+- Images of exercise key poses taken from: [acefitness.org](https://www.acefitness.org/resources/everyone/exercise-library/)
