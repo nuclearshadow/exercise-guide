@@ -7,6 +7,13 @@
 </head>
 <body>
     <h2>Exercise Guide</h2>
-    <a href="/session">Go to session page</a>
+    <p>Select Exercise</p>
+    <ul>
+        {% for ex in exercises %}
+            <li>
+                <a href="{{ url_for('session', exercise_name=ex.filename) }}">{{ ex.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
