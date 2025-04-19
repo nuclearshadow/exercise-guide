@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,5 +15,391 @@
             </li>
         {% endfor %}
     </ul>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Guide</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-light: #818CF8;
+      --dark: #1E293B;
+      --light: #F8FAFC;
+      --gray: #64748B;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    
+    body {
+      background-color: #F1F5F9;
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px var(--shadow);
+      overflow: hidden;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+    
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+    
+    .exercise-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid #E2E8F0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .exercise-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+      border-color: var(--primary-light);
+    }
+    
+    .card-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .card-img-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+    
+    .category-tag {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: rgba(255,255,255,0.9);
+      color: var(--primary);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .card-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--dark);
+    }
+    
+    .card-text {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+      line-height: 1.5;
+    }
+    
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .meta-item i {
+      margin-right: 0.3rem;
+      color: var(--primary);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #4338CA;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #E2E8F0;
+      margin: 1rem 2rem;
+    }
+    
+    .search-container {
+      margin: 2rem 2rem 1rem;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #F8FAFC;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 1.2rem;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin: 0 2rem 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      background-color: #EEF2FF;
+      color: var(--primary);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .filter-btn.active {
+      font-weight: 600;
+    }
+    
+    .section-title {
+      margin: 1.5rem 2rem 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--gray);
+    }
+    
+    .empty-state i {
+      font-size: 4rem;
+      color: #CBD5E1;
+      margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+      border-top: 1px solid #E2E8F0;
+    }
+    
+    @media (max-width: 768px) {
+      .exercise-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <h1>Exercise Guide</h1>
+        <p class="subtitle">Discover your perfect workout routine</p>
+      </div>
+    </header>
+    
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" placeholder="Search exercises..." id="searchInput">
+    </div>
+    
+    <div class="filters">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Strength</button>
+      <button class="filter-btn">Cardio</button>
+      <button class="filter-btn">Flexibility</button>
+      <button class="filter-btn">Core</button>
+    </div>
+    
+    <h2 class="section-title">Popular Exercises</h2>
+    <div class="exercise-grid" id="exerciseGrid">
+      {% for ex in exercises %}
+      <div class="exercise-card">
+        <!-- Each exercise now has a unique image based on filename -->
+        <div class="card-img" style="background-image: url('/static/images/exercises/{{ ex.filename }}.jpeg')">
+          <div class="card-img-overlay"></div>
+          <span class="category-tag">
+            {% if ex.category %}{{ ex.category }}{% else %}Fitness{% endif %}
+          </span>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">{{ ex.title }}</h3>
+          <div class="card-meta">
+            <span class="meta-item"><i class="fas fa-clock"></i> {% if ex.duration %}{{ ex.duration }}{% else %}15-30 min{% endif %}</span>
+            <span class="meta-item"><i class="fas fa-bolt"></i> {% if ex.difficulty %}{{ ex.difficulty }}{% else %}Intermediate{% endif %}</span>
+          </div>
+          <p class="card-text">{% if ex.description %}{{ ex.description }}{% else %}Enhance your fitness with this effective exercise routine designed for all levels.{% endif %}</p>
+          <a href="{{ url_for('session', exercise_name=ex.filename) }}" class="btn">Start Exercise</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <div class="divider"></div>
+    
+    
+    
+    <div class="footer">
+      &copy; 2025 Exercise Guide App | Created for a healthier lifestyle
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchInput');
+      const exerciseGrid = document.getElementById('exerciseGrid');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      
+      // Handle filter button clicks
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove active class from all buttons
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          // Add active class to clicked button
+          this.classList.add('active');
+        });
+      });
+      
+      // If there are no exercises, show empty state
+      if (exerciseGrid.children.length === 0) {
+        exerciseGrid.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-running"></i>
+            <h3>No exercises found</h3>
+            <p>Try adjusting your search or filters</p>
+          </div>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>

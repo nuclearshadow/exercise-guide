@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <title>Exercise Guide</title>
@@ -17,5 +17,427 @@
   <button id="disconnect-btn">Disconnect</button>
 
   <script src="/static/script.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Guide - Video Analysis</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-light: #818CF8;
+      --primary-dark: #4338CA;
+      --dark: #1E293B;
+      --light: #F8FAFC;
+      --gray: #64748B;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    
+    body {
+      background-color: #F1F5F9;
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .exercise-title {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-top: 0.3rem;
+    }
+    
+    .exercise-content {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .video-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .video-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .video-box {
+      background-color: #F8FAFC;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .video-header {
+      background-color: var(--dark);
+      color: white;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .video-body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      min-height: 320px;
+    }
+    
+    #video {
+      display: none;
+    }
+    
+    canvas#canvas {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stats-container {
+      display: flex;
+      gap: 1.5rem;
+      background-color: #F8FAFC;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-box {
+      flex: 1;
+      background: white;
+      border-radius: 8px;
+      padding: 1.2rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+      border-color: var(--primary-light);
+    }
+    
+    .stat-title {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .similarity-rating {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .similarity-high {
+      color: var(--success);
+    }
+    
+    .similarity-medium {
+      color: var(--warning);
+    }
+    
+    .similarity-low {
+      color: var(--danger);
+    }
+    
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      justify-content: center;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      gap: 0.5rem;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-disconnect {
+      background-color: white;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      box-shadow: none;
+    }
+    
+    .btn-disconnect:hover {
+      background-color: var(--danger);
+      color: white;
+      box-shadow: 0 6px 15px rgba(239, 68, 68, 0.2);
+    }
+    
+    .btn i {
+      font-size: 1.1rem;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+      border-top: 1px solid #E2E8F0;
+      margin-top: auto;
+    }
+    
+    .progress-container {
+      width: 100%;
+      background-color: #E2E8F0;
+      border-radius: 10px;
+      height: 8px;
+      margin-top: 0.8rem;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(to right, var(--primary-light), var(--primary));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
+    .tips-container {
+      background-color: #F0F9FF;
+      border-radius: 10px;
+      padding: 1.2rem;
+      border-left: 4px solid #0EA5E9;
+      margin-top: 1rem;
+    }
+    
+    .tips-title {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #0369A1;
+    }
+    
+    .tips-title i {
+      margin-right: 0.5rem;
+    }
+    
+    .tips-content {
+      font-size: 0.9rem;
+      color: #0C4A6E;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Exercise Guide</h1>
+        <div class="exercise-title">Video Analysis Mode</div>
+      </div>
+      <div id="feedback-status">
+        <i class="fas fa-circle" style="color: #10B981;"></i> Connected
+      </div>
+    </header>
+    
+    <div class="exercise-content">
+      <div class="video-container">
+        <div class="video-box">
+          <div class="video-header">
+            <span>Your Performance</span>
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="video-body">
+            <video id="video" width="640" height="480" autoplay muted></video>
+            <canvas id="canvas" width="640" height="480"></canvas>
+          </div>
+        </div>
+        
+        <div class="video-box">
+          <div class="video-header">
+            <span>Reference Exercise</span>
+            <i class="fas fa-medal"></i>
+          </div>
+          <div class="video-body" id="reference-video">
+            <img src="/api/placeholder/400/320" alt="Reference exercise" style="max-width: 100%; border-radius: 8px;">
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-box">
+          <div class="stat-title">SIMILARITY SCORE</div>
+          <div class="stat-value" id="similarity">0</div>
+          <div class="progress-container">
+            <div class="progress-bar" id="similarity-bar" style="width: 0%"></div>
+          </div>
+          <div class="similarity-rating similarity-low">Needs Improvement</div>
+        </div>
+        
+        <div class="stat-box">
+          <div class="stat-title">REPS COMPLETED</div>
+          <div class="stat-value">0</div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%"></div>
+          </div>
+          <div class="similarity-rating">Target: 10</div>
+        </div>
+        
+        <div class="stat-box">
+          <div class="stat-title">SESSION TIME</div>
+          <div class="stat-value" id="session-time">00:00</div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 30%"></div>
+          </div>
+          <div class="similarity-rating">Target: 5:00</div>
+        </div>
+      </div>
+      
+      <div class="tips-container">
+        <div class="tips-title">
+          <i class="fas fa-lightbulb"></i> Exercise Tips
+        </div>
+        <div class="tips-content">
+          Make sure your entire body is visible in the camera frame. Keep your movements controlled and follow the reference exercise pattern. The AI will analyze your form and provide real-time feedback on your performance.
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button class="btn">
+          <i class="fas fa-redo"></i> Restart Exercise
+        </button>
+        <button class="btn" style="background-color: #10B981;">
+          <i class="fas fa-play"></i> Start Analysis
+        </button>
+        <button id="disconnect-btn" class="btn btn-disconnect">
+          <i class="fas fa-power-off"></i> Disconnect
+        </button>
+      </div>
+    </div>
+    
+    <div class="footer">
+      &copy; 2025 Exercise Guide App | AI-Powered Training
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script>
+    // Basic functionality to demonstrate UI interactions
+    document.addEventListener('DOMContentLoaded', function() {
+      const similarityElement = document.getElementById('similarity');
+      const similarityBar = document.getElementById('similarity-bar');
+      const similarityRating = document.querySelector('.similarity-rating');
+      const disconnectBtn = document.getElementById('disconnect-btn');
+      const sessionTimeElement = document.getElementById('session-time');
+      
+      // Fake timer for demonstration
+      let seconds = 0;
+      let minutes = 0;
+      setInterval(() => {
+        seconds++;
+        if (seconds >= 60) {
+          seconds = 0;
+          minutes++;
+        }
+        sessionTimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+      
+      // Simulate random similarity score changes
+      setInterval(() => {
+        const randomValue = Math.floor(Math.random() * 100);
+        similarityElement.textContent = randomValue;
+        similarityBar.style.width = `${randomValue}%`;
+        
+        if (randomValue < 40) {
+          similarityRating.textContent = "Needs Improvement";
+          similarityRating.className = "similarity-rating similarity-low";
+        } else if (randomValue < 70) {
+          similarityRating.textContent = "Getting Better";
+          similarityRating.className = "similarity-rating similarity-medium";
+        } else {
+          similarityRating.textContent = "Excellent Form";
+          similarityRating.className = "similarity-rating similarity-high";
+        }
+      }, 2000);
+      
+      // Disconnect button functionality
+      disconnectBtn.addEventListener('click', function() {
+        document.getElementById('feedback-status').innerHTML = '<i class="fas fa-circle" style="color: #EF4444;"></i> Disconnected';
+      });
+    });
+  </script>
 </body>
 </html>
